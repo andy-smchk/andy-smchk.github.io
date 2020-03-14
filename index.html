@@ -40,6 +40,13 @@
             border: 3px solid #41cbd3;
             cursor: pointer;
         }
+
+        #lifeBar {
+            margin: 25px;
+            position: absolute;
+            background-color: red;
+            width: 200px;
+        }
     </style>
     <script src="dat.gui.min.js"></script>
 </head>
@@ -47,6 +54,7 @@
 <div id="menu">
     <div id="startGame">START GAME!</div>
 </div>
+<progress id="lifeBar" value="100" max="100"></progress>
 <audio loop id="music">
     <source src="Blazer%20Rail.wav">
 </audio>

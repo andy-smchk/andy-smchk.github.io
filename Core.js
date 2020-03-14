@@ -7,6 +7,8 @@ function Core(drawer, world) {
   this.pause = false;
   this.drawMode = false;
   this.toRemove = [];
+  this.stop = false;
+  this.stopCallback = null;
 
   this.time = 0;
   var that = this;
@@ -41,6 +43,14 @@ function Core(drawer, world) {
 
   this.process = function (dt) {
     if (this.pause) {
+      return;
+    }
+
+    if (this.stop) {
+      if (this.stopCallback) {
+        this.stopCallback();
+        this.stopCallback = null;
+      }
       return;
     }
     this.time++;
@@ -179,11 +189,19 @@ function Core(drawer, world) {
     player.velocity = ownY.add(ownX) ;
     anotherPlayer.velocity = anotherY.add(anotherX);
     if (player.removeOnCollision || player.removeOnCollisionWithType.indexOf(anotherPlayer.type) > -1) {
-      this.toRemoveElement(player);
+      --player.collisionsBeforeRemove;
+      player.onRemoveCollision();
+      if (player.collisionsBeforeRemove <= 0) {
+        this.toRemoveElement(player);
+      }
     }
 
     if (anotherPlayer.removeOnCollision || anotherPlayer.removeOnCollisionWithType.indexOf(player.type) > -1) {
-      this.toRemoveElement(anotherPlayer);
+      --anotherPlayer.collisionsBeforeRemove;
+      anotherPlayer.onRemoveCollision();
+      if (anotherPlayer.collisionsBeforeRemove <= 0) {
+        this.toRemoveElement(anotherPlayer);
+      }
     }
   };
 }

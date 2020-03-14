@@ -11,6 +11,8 @@ function Player(id) {
   this.removeOnCollision = false;
   this.type = 'standard';
   this.removeOnCollisionWithType = [];
+  this.collisionsBeforeRemove = 1;
+  this.onRemoveCollisionCallback = null;
   this.beforeRemoveCallback = null;
   this.sprite = null;
 
@@ -30,6 +32,12 @@ function Player(id) {
   this.onRemove = function () {
     if (this.beforeRemoveCallback) {
       this.beforeRemoveCallback(this);
+    }
+  };
+
+  this.onRemoveCollision = function () {
+    if (this.onRemoveCollisionCallback) {
+      this.onRemoveCollisionCallback(this);
     }
   }
 }

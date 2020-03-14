@@ -39,24 +39,36 @@ var Renderer = function (context, drawer) {
       //   core.addElement(newElement);
       // }
 
-      var youLose = function () {
-        alert('You lose!( Try again');
-        location.reload();
+      var hitsCanBetaken = 10;
+      var lifeBar = function (lifeLeft) {
+        document.getElementById("lifeBar").value = lifeLeft/hitsCanBetaken * 100;
       };
 
       var johnDoe = new Player(1);
       var sprite = new Image();
       sprite.src = 'rsz_1rsz_kindpng_1076693.png';
       johnDoe.direction = new Victor(0, 0);
-      johnDoe.position = new Victor(500, 500);
+      johnDoe.position = new Victor(context.width/2, context.height - 100);
       johnDoe.radius = 40;
       johnDoe.mass = 50;
       johnDoe.sprite = sprite;
+      johnDoe.collisionsBeforeRemove = hitsCanBetaken;
       johnDoe.setSpeed(1);
       johnDoe.removeOnCollisionWithType = ['enemy'];
-      johnDoe.beforeRemoveCallback = youLose;
+      johnDoe.beforeRemoveCallback = function () {
+        if (core.stop) return;
 
+        core.stop = true;
+        core.stopCallback = function () {
+          alert('You lose!( Try again');
+          location.reload();
+        };
+      };
+      johnDoe.onRemoveCollisionCallback = function() {
+        lifeBar(johnDoe.collisionsBeforeRemove);
+      };
       core.addElement(johnDoe);
+
       var bullets = 2000;
       var spriteBullet = new Image();
       spriteBullet.src = 'projectile-sprite-png-14.png';
@@ -100,9 +112,15 @@ var Renderer = function (context, drawer) {
       });
 
       var youWin = function () {
-        alert('You won!!!) Try again');
-        location.reload();
+        if (core.stop) return;
+
+        core.stop = true;
+        core.stopCallback = function () {
+          alert('You won!!!) Try again');
+          location.reload();
+        };
       };
+
 
       var enemiesLeft = 0;
       var enemyKill = function () {
